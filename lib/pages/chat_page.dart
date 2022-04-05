@@ -1,4 +1,4 @@
-import 'package:caverna_do_tesouro/services/account_service.dart';
+import 'package:caverna_do_tesouro/services/chatbot/chatbot.dart';
 import 'package:flutter/material.dart';
 
 import '../models/chat_message.dart';
@@ -15,30 +15,13 @@ class ChatPage extends StatefulWidget {
 enum CurrentActionType { none, accountCreation }
 
 class _ChatPageState extends State<ChatPage> {
+  final _chatBot = ChatBot();
   final _messageList = <ChatMessage>[];
   final _controllerText = TextEditingController();
 
-  // TODO refactor to read options from a List
-  final _actionsOptions =
-      """1 - Adicionar Conta Bancária\n2 - Adicionar Cartão de crédito""";
-  late ChatMessage _initialMessage;
-  CurrentActionType _currentAction = CurrentActionType.none;
-  final _actions = [
-    {"actionType": CurrentActionType.none, "initialMessage": ""},
-    {
-      "actionType": CurrentActionType.accountCreation,
-      "initialMessage": "Qual o nome da conta?"
-    },
-  ];
-  final _accountCreationData = {
-    "name": "",
-    "balance": "",
-  };
-
   _ChatPageState() {
-    _initialMessage = ChatMessage(ChatMessageType.received,
-        """O que você deseja fazer?\n$_actionsOptions""");
-    _messageList.add(_initialMessage);
+    _messageList
+        .add(ChatMessage(ChatMessageType.received, _chatBot.initialMessage()));
   }
 
   void _addMessage(String text, ChatMessageType type) {
@@ -49,62 +32,11 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void _updateCurrentAction(String message) {
-    try {
-      var action = _actions[int.parse(message)];
-      _currentAction = action["actionType"] as CurrentActionType;
-      var initialMessage = action["initialMessage"] as String;
-      _addMessage(initialMessage, ChatMessageType.received);
-    } catch (exception) {
-      _addMessage(
-        "Desculpa, não consegui achar essa opção!\nSó conheço esses comandos",
-        ChatMessageType.received,
-      );
-      _addMessage(_actionsOptions, ChatMessageType.received);
-    }
-  }
-
-  void _saveAccount() {
-    var accountService = AccountService();
-    accountService.create(_accountCreationData);
-  }
-
-  void clearAccountData() {
-    _accountCreationData["name"] = "";
-    _accountCreationData["balance"] = "";
-  }
-
-  void _processAccountCreation(String message) {
-    var answer = "";
-
-    if (_accountCreationData["name"]!.isEmpty) {
-      _accountCreationData["name"] = message;
-      answer = "Qual o saldo inicial?";
-    } else if (_accountCreationData["balance"]!.isEmpty) {
-      _accountCreationData["balance"] = message;
-      _saveAccount();
-      clearAccountData();
-      answer = "Conta cadastrada";
-    }
-
-    _addMessage(answer, ChatMessageType.received);
-
-    print(_accountCreationData);
-  }
-
   void _sendMessage(String message) {
     _controllerText.clear();
-
     _addMessage(message, ChatMessageType.sent);
-
-    switch (_currentAction) {
-      case CurrentActionType.none:
-        _updateCurrentAction(message.trim());
-        break;
-      case CurrentActionType.accountCreation:
-        _processAccountCreation(message);
-        break;
-    }
+    var answer = _chatBot.processMessage(message);
+    _addMessage(answer, ChatMessageType.received);
   }
 
   @override
