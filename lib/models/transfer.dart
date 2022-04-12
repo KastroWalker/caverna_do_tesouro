@@ -3,7 +3,7 @@ import 'account.dart';
 class Transfer {
   Account originAccount;
   Account destinyAccount;
-  BigInt value;
+  double value;
   DateTime date;
 
   Transfer(

@@ -1,8 +1,11 @@
+import 'package:caverna_do_tesouro/services/account_service.dart';
+
 class AccountOperation {
   final _accountCreationData = {
     "name": "",
     "balance": "",
   };
+  final _service = AccountService();
 
   void _clearData() {
     _accountCreationData["name"] = "";
@@ -13,7 +16,7 @@ class AccountOperation {
     return _accountCreationData;
   }
 
-  String createAccount(String message) {
+  Future<String> createAccount(String message) async {
     var answer = "";
 
     if (_accountCreationData["name"]!.isEmpty) {
@@ -21,8 +24,9 @@ class AccountOperation {
       answer = "Qual o saldo inicial?";
     } else if (_accountCreationData["balance"]!.isEmpty) {
       _accountCreationData["balance"] = message;
+      var contactStored = await _service.create(_accountCreationData);
       _clearData();
-      answer = "Conta cadastrada";
+      answer = "Conta cadastrada: $contactStored";
     }
 
     return answer;

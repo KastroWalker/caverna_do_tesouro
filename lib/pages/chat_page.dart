@@ -1,4 +1,4 @@
-import 'package:caverna_do_tesouro/services/chatbot/chatbot.dart';
+import 'package:caverna_do_tesouro/chatbot/chatbot.dart';
 import 'package:flutter/material.dart';
 
 import '../models/chat_message.dart';
@@ -32,10 +32,10 @@ class _ChatPageState extends State<ChatPage> {
     });
   }
 
-  void _sendMessage(String message) {
+  void _sendMessage(String message) async {
     _controllerText.clear();
     _addMessage(message, ChatMessageType.sent);
-    var answer = _chatBot.processMessage(message);
+    var answer = await _chatBot.processMessage(message);
     _addMessage(answer, ChatMessageType.received);
   }
 

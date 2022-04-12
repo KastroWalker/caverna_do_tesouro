@@ -1,4 +1,4 @@
-import 'package:caverna_do_tesouro/services/chatbot/operations/account.dart';
+import 'package:caverna_do_tesouro/chatbot/operations/account.dart';
 
 enum CurrentOperationType { none, accountCreation }
 
@@ -17,12 +17,12 @@ class ChatBot {
     },
   ];
 
-  String processMessage(String message) {
+  Future<String> processMessage(String message) async {
     switch (_currentOperation) {
       case CurrentOperationType.none:
         return _updateOperation(message);
       case CurrentOperationType.accountCreation:
-        return accountOperation.createAccount(message);
+        return await accountOperation.createAccount(message);
       default:
         return "";
     }

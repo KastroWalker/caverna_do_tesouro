@@ -3,7 +3,7 @@ import 'credit_card.dart';
 
 class Payment {
   Account account;
-  BigInt value;
+  double value;
   CreditCard creditCard;
   DateTime date;
 

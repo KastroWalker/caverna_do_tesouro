@@ -7,7 +7,7 @@ enum TypeFinanceOperation {
 
 class FinanceOperation {
   String name;
-  BigInt value;
+  double value;
   TypeFinanceOperation typeOperation;
   Income income;
   DateTime date;

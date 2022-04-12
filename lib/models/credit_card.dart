@@ -3,7 +3,7 @@ import 'income.dart';
 class CreditCard implements Income {
   @override
   String name;
-  BigInt invoice;
+  double invoice;
 
   CreditCard(
     this.name,
