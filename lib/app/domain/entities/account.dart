@@ -1,15 +1,16 @@
 import 'income.dart';
 
 class Account implements Income {
-  int? id;
+  dynamic id;
   @override
   String name;
-  final double balance;
+  double balance;
 
-  Account(
-    this.name,
-    this.balance,
-  );
+  Account({
+    this.id,
+    required this.name,
+    required this.balance,
+  });
 
   Map<String, dynamic> toMap(){
     return {

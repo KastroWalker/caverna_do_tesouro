@@ -1,11 +1,13 @@
-import 'package:caverna_do_tesouro/services/account_service.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../interfaces/account_service.dart';
 
 class AccountOperation {
   final _accountCreationData = {
     "name": "",
     "balance": "",
   };
-  final _service = AccountService();
+  final _service = GetIt.I.get<IAccountService>();
 
   void _clearData() {
     _accountCreationData["name"] = "";

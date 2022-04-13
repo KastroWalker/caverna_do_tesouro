@@ -1,9 +1,9 @@
-import 'package:caverna_do_tesouro/chatbot/chatbot.dart';
 import 'package:flutter/material.dart';
 
-import '../models/chat_message.dart';
-import '../widgets/message_input.dart';
-import '../widgets/messages_list.dart';
+import '../domain/bot/main.dart';
+import '../domain/entities/chat_message.dart';
+import 'widgets/message_input.dart';
+import 'widgets/messages_list.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -15,7 +15,7 @@ class ChatPage extends StatefulWidget {
 enum CurrentActionType { none, accountCreation }
 
 class _ChatPageState extends State<ChatPage> {
-  final _chatBot = ChatBot();
+  final _chatBot = Bot();
   final _messageList = <ChatMessage>[];
   final _controllerText = TextEditingController();
 

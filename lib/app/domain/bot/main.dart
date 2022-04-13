@@ -1,10 +1,11 @@
-import 'package:caverna_do_tesouro/chatbot/operations/account.dart';
+import 'package:get_it/get_it.dart';
+
+import 'commands/account.dart';
 
 enum CurrentOperationType { none, accountCreation }
 
-class ChatBot {
-  AccountOperation accountOperation = AccountOperation();
-  CurrentOperationType _currentOperation = CurrentOperationType.none;
+class Bot {
+  final accountOperation = GetIt.I.get<AccountOperation>();
   final _operationsOptions = [
     "Adicionar Conta Bancária",
     "Adicionar Cartão de crédito"
@@ -16,6 +17,7 @@ class ChatBot {
       "initialMessage": "Qual o nome da conta?"
     },
   ];
+  var _currentOperation = CurrentOperationType.none;
 
   Future<String> processMessage(String message) async {
     switch (_currentOperation) {
