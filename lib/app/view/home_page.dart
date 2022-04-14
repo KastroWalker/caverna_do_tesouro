@@ -14,9 +14,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
           'Caverna do Tesouro',
-          textAlign: TextAlign.center,
+          textAlign: TextAlign.left,
         ),
       ),
       body: Column(

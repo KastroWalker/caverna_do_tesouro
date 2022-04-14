@@ -48,6 +48,7 @@ class _AccountListPageState extends State<AccountListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text(
           'Minhas Contas Bancárias',
           textAlign: TextAlign.center,
