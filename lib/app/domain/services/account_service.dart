@@ -19,6 +19,11 @@ class AccountService implements IAccountService {
     
     var newAccount = Account(name: name, balance: balance);
 
-    return _dao.store(newAccount);
+    return await _dao.store(newAccount);
+  }
+
+  @override
+  Future<List<Account>?> listAll() async{
+    return await _dao.fetchAll();
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../my_app.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -18,6 +20,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           ListView(
             shrinkWrap: true,
@@ -29,11 +32,17 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pushNamed(context, '/chat');
-            },
-            child: const Text('Nova Atividade'),
+          ElevatedButton(onPressed: () {
+            Navigator.pushNamed(context, MyApp.accountListPage);
+          }, child: const Text('Contas Bancárias'),),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, MyApp.chatPage);
+              },
+              child: const Text('Nova Atividade'),
+            ),
           ),
         ],
       ),
