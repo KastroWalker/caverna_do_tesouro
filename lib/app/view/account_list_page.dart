@@ -1,5 +1,6 @@
 import 'package:caverna_do_tesouro/app/domain/entities/account.dart';
 import 'package:caverna_do_tesouro/app/view/widgets/account_list_item.dart';
+import 'package:caverna_do_tesouro/app/view/widgets/bg_list_item_remove.dart';
 import 'package:caverna_do_tesouro/app/view/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -15,7 +16,33 @@ class AccountListPage extends StatefulWidget {
 
 class _AccountListPageState extends State<AccountListPage> {
   final _accountService = GetIt.I.get<IAccountService>();
-  static const IconData delete = IconData(0xe1b9, fontFamily: 'MaterialIcons');
+
+  // TODO refresh data when scrolling the page
+
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        // TODO turn into a widget
+        return AlertDialog(
+          title: const Text("Remover conta bancária"),
+          content:
+              const Text("Tem certeza que deseja remover essa conta bancária?"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Remover"),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,23 +74,31 @@ class _AccountListPageState extends State<AccountListPage> {
                     onUpdate: (info) {
                       // TODO change the side of icons depends on the direction
                     },
-                    onDismissed: (direction) {
-                      // TODO open dialog to confirm removing
+                    onDismissed: (direction) async {
                       // TODO remove account from database and update list
-                      // TODO show snackbar with removal message
-                    },
-                    background: Container(
-                      color: Colors.red,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: const [
-                          Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Icon(delete, color: Colors.white,),
+                      // TODO show alert message if the account is in using
+                      final isAccountRemoved =
+                          await _accountService.remove(account.id);
+
+                      if (isAccountRemoved) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('"${account.name}" foi removida!'),
                           ),
-                        ],
-                      ),
-                    ),
+                        );
+                      }
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Erro ao remover "${account.name}"! Tente novamente!'),
+                        ),
+                      );
+                    },
+                    confirmDismiss: (direction) async {
+                      return await _showConfirmationDialog(context);
+                    },
+                    background: const BGListItemRemove(),
                     child: AccountListItem(account),
                   );
                 },
@@ -76,3 +111,4 @@ class _AccountListPageState extends State<AccountListPage> {
     );
   }
 }
+

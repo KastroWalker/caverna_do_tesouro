@@ -12,7 +12,7 @@ class Account implements Income {
     required this.balance,
   });
 
-  Map<String, dynamic> toMap(){
+  Map<String, dynamic> toMap() {
     return {
       'name': name,
       'balance': balance,

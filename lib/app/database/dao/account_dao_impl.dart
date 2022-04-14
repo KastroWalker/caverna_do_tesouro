@@ -7,6 +7,8 @@ import 'package:sqflite/sqflite.dart';
 class AccountDAOImpl implements IAccountDAO {
   final String _table = 'account';
 
+  // TODO add try catch in the methods
+
   @override
   Future<String> store(Account account) async {
     final connection = await Connection.get();
@@ -35,5 +37,16 @@ class AccountDAOImpl implements IAccountDAO {
     }
 
     return null;
+  }
+
+  @override
+  Future<int> delete(int id) async {
+    final connection = await Connection.get();
+
+    if (connection != null) {
+      return await connection.delete(_table, where: 'id = ?', whereArgs: [id]);
+    }
+
+    return 0;
   }
 }

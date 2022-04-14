@@ -11,7 +11,8 @@ class AccountListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(account.name),
-      subtitle: Text(account.balance.toString()),
+      subtitle:
+          Text('${account.balance.toString()} - ${account.id.toString()}'),
     );
   }
 }

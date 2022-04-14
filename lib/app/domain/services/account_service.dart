@@ -16,14 +16,19 @@ class AccountService implements IAccountService {
 
     var name = data["name"]!;
     var balance = double.parse(data["balance"]!);
-    
+
     var newAccount = Account(name: name, balance: balance);
 
     return await _dao.store(newAccount);
   }
 
   @override
-  Future<List<Account>?> listAll() async{
+  Future<List<Account>?> listAll() async {
     return await _dao.fetchAll();
+  }
+
+  @override
+  Future<bool> remove(int accountID) async {
+    return await _dao.delete(accountID) == 1 ? true : false;
   }
 }
