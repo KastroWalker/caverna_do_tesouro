@@ -1,5 +1,4 @@
 import 'package:caverna_do_tesouro/app/database/connection.dart';
-import 'package:caverna_do_tesouro/app/database/script.dart';
 import 'package:caverna_do_tesouro/app/domain/entities/account.dart';
 import 'package:caverna_do_tesouro/app/domain/interfaces/account_dao.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,11 +27,7 @@ class AccountDAOImpl implements IAccountDAO {
       final List<Map<String, dynamic>> maps = await connection.query(_table);
 
       return List.generate(maps.length, (index) {
-        return Account(
-          id: maps[index][AccountColumnsName.id],
-          name: maps[index][AccountColumnsName.name],
-          balance: maps[index][AccountColumnsName.balance],
-        );
+        return toObject(maps[index]);
       });
     }
 
@@ -48,5 +43,27 @@ class AccountDAOImpl implements IAccountDAO {
     }
 
     return 0;
+  }
+
+  @override
+  Future<Account?> findById(int id) async {
+    final connection = await Connection.get();
+
+    if (connection != null) {
+      final accounts =
+          await connection.query(_table, where: 'id = ?', whereArgs: [id]);
+      return toObject(accounts[0]);
+    }
+
+    return null;
+  }
+
+  @override
+  Account toObject(Map<String, dynamic> map) {
+    return Account(
+      id: map[AccountColumnsName.id],
+      name: map[AccountColumnsName.name],
+      balance: map[AccountColumnsName.balance],
+    );
   }
 }

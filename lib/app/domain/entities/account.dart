@@ -1,5 +1,11 @@
 import 'income.dart';
 
+abstract class AccountColumnsName {
+  static const id = 'id';
+  static const name = 'name';
+  static const balance = 'balance';
+}
+
 class Account implements Income {
   dynamic id;
   @override
@@ -14,8 +20,8 @@ class Account implements Income {
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
-      'balance': balance,
+      AccountColumnsName.name: name,
+      AccountColumnsName.balance: balance,
     };
   }
 

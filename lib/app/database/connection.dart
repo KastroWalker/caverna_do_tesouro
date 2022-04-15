@@ -7,12 +7,14 @@ class Connection {
 
   static Future<Database?> get() async {
     if (_db == null) {
-      var path = join(await getDatabasesPath(), 'banco_contatos');
+      var path = join(await getDatabasesPath(), 'caverna_do_tesouro.db');
       _db = await openDatabase(
         path,
         version: 1,
         onCreate: (db, v) {
-          db.execute(createTable);
+          for (final script in scripts) {
+            db.execute(script);
+          }
         },
       );
     }

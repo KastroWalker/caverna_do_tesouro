@@ -14,10 +14,10 @@ class AccountService implements IAccountService {
       throw InvalidData("Name and balance is required!");
     }
 
-    var name = data["name"]!;
-    var balance = double.parse(data["balance"]!);
+    final name = data["name"]!;
+    final balance = double.parse(data["balance"]!);
 
-    var newAccount = Account(name: name, balance: balance);
+    final newAccount = Account(name: name, balance: balance);
 
     return await _dao.store(newAccount);
   }
