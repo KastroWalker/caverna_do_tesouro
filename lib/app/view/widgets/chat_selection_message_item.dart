@@ -1,23 +1,19 @@
 import 'package:caverna_do_tesouro/app/view/widgets/labeled_radio.dart';
 import 'package:flutter/material.dart';
 
-import 'chat_message_item.dart';
-
-class SelectionCard extends StatelessWidget implements ChatMessageItem {
+class ChatSelectionMessageItem extends StatelessWidget {
   final String cardTitle;
   final List<Map<String, String>> options;
   final String groupValue;
   final ValueChanged<String> onChanged;
   final Function onPressedButton;
-  final String buttonTitle;
 
-  const SelectionCard({
+  const ChatSelectionMessageItem({
+    required this.groupValue,
     required this.cardTitle,
     required this.options,
-    required this.groupValue,
     required this.onChanged,
     required this.onPressedButton,
-    required this.buttonTitle,
     Key? key,
   }) : super(key: key);
 
@@ -45,7 +41,7 @@ class SelectionCard extends StatelessWidget implements ChatMessageItem {
           : () {
               onPressedButton();
             },
-      child: Text(buttonTitle),
+      child: const Text('Selecionar'),
     );
   }
 

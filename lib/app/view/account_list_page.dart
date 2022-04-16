@@ -64,7 +64,7 @@ class _AccountListPageState extends State<AccountListPage> {
             case ConnectionState.active:
               break;
             case ConnectionState.waiting:
-              return Loader(text: 'Carregando contas bancárias...');
+              return const Loader(text: 'Carregando contas bancárias...');
             case ConnectionState.done:
               final List<Account>? accounts = snapshot.data;
               return ListView.builder(
