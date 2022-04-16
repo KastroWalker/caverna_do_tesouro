@@ -5,7 +5,7 @@ import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_dao.d
 import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_service.dart';
 import 'package:get_it/get_it.dart';
 
-import '../entities/FinanceOperationType.dart';
+import '../entities/finance_operation_type.dart';
 import '../exceptions/invalid_data.dart';
 
 class FinanceOperationService implements IFinanceOperationService {

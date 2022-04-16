@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
           options: options,
           groupValue: _selectionController.group,
           onChanged: _selectionController.updateOptionSelected,
-          onPressedButton: _selectionController.clickedButton,
+          onPressedButton: _onSelectedSelectionOption,
         );
       },
     );
@@ -98,6 +98,11 @@ class _ChatPageState extends State<ChatPage> {
     _addMessage(type: ChatMessageType.user, message: message);
     var answer = await _chatBot.processMessage(message);
     _addMessage(type: ChatMessageType.bot, answer: answer);
+  }
+
+  // TODO move to a controller
+  void _onSelectedSelectionOption() {
+    _sendMessage(_selectionController.group);
   }
 
   @override

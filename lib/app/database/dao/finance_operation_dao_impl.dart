@@ -17,7 +17,6 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
       financeOperation.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    print('DEBUG: ${await connection?.query(_table)}');
     return financeOperation.toString();
   }
 

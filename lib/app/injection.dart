@@ -7,6 +7,7 @@ import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_servi
 import 'package:caverna_do_tesouro/app/domain/services/finance_operation_service.dart';
 import 'package:get_it/get_it.dart';
 
+import 'domain/bot/commands/finance_operation_command.dart';
 import 'domain/interfaces/account_service.dart';
 import 'domain/services/account_service.dart';
 
@@ -23,4 +24,5 @@ setupInjection() async{
 
   // Commands
   getIt.registerSingleton<AccountCommands>(AccountCommands());
+  getIt.registerSingleton<FinanceOperationCommands>(FinanceOperationCommands());
 }

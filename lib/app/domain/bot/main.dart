@@ -1,32 +1,50 @@
+import 'package:caverna_do_tesouro/app/domain/entities/answer.dart';
 import 'package:get_it/get_it.dart';
 
-import 'commands/account.dart';
+import 'commands/account_command.dart';
+import 'commands/finance_operation_command.dart';
 
-enum CurrentOperationType { none, accountCreation }
+// TODO move to an external file
+enum CurrentOperationType { none, accountCreation, financeOperationCreation }
 
 class Bot {
-  final accountOperation = GetIt.I.get<AccountOperation>();
+  final accountCommands = GetIt.I.get<AccountCommands>();
+  final financeOperationCommands = GetIt.I.get<FinanceOperationCommands>();
+
+  // TODO move to an external file
   final _operationsOptions = [
     "Adicionar Conta Bancária",
-    "Adicionar Cartão de crédito"
+    "Adicionar Lançamento"
   ];
+
+  // TODO move to an external file
+  // TODO transform to a class
   final _operations = [
     {"operationType": CurrentOperationType.none, "initialMessage": ""},
     {
       "operationType": CurrentOperationType.accountCreation,
       "initialMessage": "Qual o nome da conta?"
     },
+    {
+      "operationType": CurrentOperationType.financeOperationCreation,
+      "initialMessage": "Qual o nome do lançamento?"
+    }
   ];
+
   var _currentOperation = CurrentOperationType.none;
 
-  Future<String> processMessage(String message) async {
+  Future<Answer> processMessage(String message) async {
     switch (_currentOperation) {
       case CurrentOperationType.none:
-        return _updateOperation(message);
+        final updateMessage = _updateOperation(message);
+        return Answer(type: AnswerType.text, text: updateMessage);
       case CurrentOperationType.accountCreation:
-        return await accountOperation.createAccount(message);
+        return await accountCommands.createAccount(message);
+      case CurrentOperationType.financeOperationCreation:
+        print('MESSAGE: $message');
+        return await financeOperationCommands.createFinanceOperation(message);
       default:
-        return "";
+        return Answer(type: AnswerType.text, text: "");
     }
   }
 
@@ -41,12 +59,12 @@ class Bot {
     }
   }
 
-  String initialMessage() {
+  Answer initialMessage() {
     var message = "";
 
     _operationsOptions.asMap().forEach(
         (index, operation) => message = "$message\n${index + 1} - $operation");
 
-    return message;
+    return Answer(type: AnswerType.text, text: message);
   }
 }

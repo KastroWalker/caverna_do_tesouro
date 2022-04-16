@@ -1,4 +1,4 @@
-import 'package:caverna_do_tesouro/app/domain/entities/FinanceOperationType.dart';
+import 'package:caverna_do_tesouro/app/domain/entities/finance_operation_type.dart';
 import 'package:caverna_do_tesouro/app/domain/entities/credit_card.dart';
 
 import 'account.dart';
