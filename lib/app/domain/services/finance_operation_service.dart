@@ -41,4 +41,9 @@ class FinanceOperationService implements IFinanceOperationService {
 
     return await _dao.store(newFinanceOperation);
   }
+
+  @override
+  Future<List<FinanceOperation>?> listAll() async {
+    return await _dao.fetchAll();
+  }
 }

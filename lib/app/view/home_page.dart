@@ -1,4 +1,8 @@
+import 'package:caverna_do_tesouro/app/domain/entities/finance_operation.dart';
+import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_service.dart';
+import 'package:caverna_do_tesouro/app/view/widgets/loader.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
 import '../my_app.dart';
 
@@ -23,16 +27,7 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(8),
-            children: const [
-              ListTile(
-                title: Text('Água'),
-                subtitle: Text('R\$ 250'),
-              ),
-            ],
-          ),
+          FinanceOperationList(),
           ElevatedButton(onPressed: () {
             Navigator.pushNamed(context, MyApp.accountListPage);
           }, child: const Text('Contas Bancárias'),),
@@ -47,6 +42,49 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class FinanceOperationList extends StatelessWidget {
+  final _financeOperationService = GetIt.I.get<IFinanceOperationService>();
+
+  FinanceOperationList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<FinanceOperation>?>(
+      initialData: const [],
+      future: _financeOperationService.listAll(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            break;
+          case ConnectionState.active:
+            break;
+          case ConnectionState.waiting:
+            return const Loader(text: 'Carregando contas bancárias...');
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return const Text('Erro ao carregar lançamentos');
+            }
+            final List<FinanceOperation>? financeOperations = snapshot.data;
+            return ListView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.all(8),
+              itemBuilder: (context, index) {
+                final FinanceOperation financeOperation =
+                    financeOperations![index];
+                return ListTile(
+                  title: Text(financeOperation.name),
+                  subtitle: Text(financeOperation.value.toString()),
+                );
+              },
+              itemCount: financeOperations!.length,
+            );
+        }
+        return const Text('Unknown error');
+      },
     );
   }
 }
