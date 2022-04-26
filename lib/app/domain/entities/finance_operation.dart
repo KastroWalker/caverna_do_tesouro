@@ -52,4 +52,9 @@ class FinanceOperation {
 
     return object;
   }
+
+  @override
+  String toString() {
+    return 'FinanceOperation{id: $id, name: $name, value: $value, income: $income, account: $account, creditCard: $creditCard, financeOperationType: $financeOperationType, createdAt: $createdAt}';
+  }
 }

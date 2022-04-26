@@ -41,7 +41,6 @@ class Bot {
       case CurrentOperationType.accountCreation:
         return await accountCommands.createAccount(message);
       case CurrentOperationType.financeOperationCreation:
-        print('MESSAGE: $message');
         return await financeOperationCommands.createFinanceOperation(message);
       default:
         return Answer(type: AnswerType.text, text: "");

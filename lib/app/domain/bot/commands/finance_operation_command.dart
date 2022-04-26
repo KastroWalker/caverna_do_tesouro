@@ -1,5 +1,6 @@
 import 'package:caverna_do_tesouro/app/domain/entities/answer.dart';
 import 'package:caverna_do_tesouro/app/domain/interfaces/account_service.dart';
+import 'package:caverna_do_tesouro/app/domain/services/finance_operation_service.dart';
 import 'package:get_it/get_it.dart';
 
 class FinanceOperationCommands {
@@ -11,6 +12,15 @@ class FinanceOperationCommands {
     "incomeId": "",
     "typeIncome": "",
   };
+  final _service = FinanceOperationService();
+
+  void _clearData() {
+    _financeOperationData["name"] = "";
+    _financeOperationData["value"] = "";
+    _financeOperationData["typeOperation"] = "";
+    _financeOperationData["incomeId"] = "";
+    _financeOperationData["typeIncome"] = "";
+  }
 
   Future<Answer> _createAccountsList() async {
     final accounts = await _accountService.listAll();
@@ -72,7 +82,9 @@ class FinanceOperationCommands {
       answer = await _createAccountsList();
     } else if (_financeOperationData["incomeId"]!.isEmpty) {
       _financeOperationData["incomeId"] = message;
-      answer.text = "Lançamento cadastradao!";
+      var operationCreated = await _service.create(_financeOperationData);
+      _clearData();
+      answer.text = "Lançamento cadastrado: $operationCreated";
     }
 
     return answer;

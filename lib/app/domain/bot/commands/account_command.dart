@@ -28,9 +28,9 @@ class AccountCommands {
       answer.text = "Qual o saldo inicial?";
     } else if (_accountCreationData["balance"]!.isEmpty) {
       _accountCreationData["balance"] = message;
-      var contactStored = await _service.create(_accountCreationData);
+      var accountCreated = await _service.create(_accountCreationData);
       _clearData();
-      answer.text = "Conta cadastrada: $contactStored";
+      answer.text = "Conta cadastrada: $accountCreated";
     }
 
     return answer;
