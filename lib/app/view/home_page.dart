@@ -51,6 +51,64 @@ class FinanceOperationList extends StatelessWidget {
 
   FinanceOperationList({Key? key}) : super(key: key);
 
+  // TODO extract to a external widget
+  void _showOperationInfo(BuildContext context, FinanceOperation operation) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          operation.name,
+          textAlign: TextAlign.center,
+        ),
+        content: SizedBox(
+          height: 200,
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Valor:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(operation.value.toString()),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Tipo de lançamento:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(operation.financeOperationType.id == 1
+                    ? 'Entrada'
+                    : 'Saída'),
+              ],
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Conta Bancária:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(operation.income.name),
+              ],
+            ),
+          ],
+        ),),
+        // actions: [
+        //   FlatButton(
+        //     child: const Text('OK'),
+        //     onPressed: () => Navigator.pop(context),
+        //   ),
+        // ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<FinanceOperation>?>(
@@ -63,7 +121,7 @@ class FinanceOperationList extends StatelessWidget {
           case ConnectionState.active:
             break;
           case ConnectionState.waiting:
-            return const Loader(text: 'Carregando contas bancárias...');
+            return const Loader(text: 'Carregando lançamentos...');
           case ConnectionState.done:
             if (snapshot.hasError) {
               return const Text('Erro ao carregar lançamentos');
@@ -75,9 +133,17 @@ class FinanceOperationList extends StatelessWidget {
               itemBuilder: (context, index) {
                 final FinanceOperation financeOperation =
                     financeOperations![index];
-                return ListTile(
-                  title: Text(financeOperation.name),
-                  subtitle: Text(financeOperation.value.toString()),
+                return Dismissible(
+                  key: Key(financeOperation.id.toString()),
+                  child: InkWell(
+                    onTap: () {
+                      _showOperationInfo(context, financeOperation);
+                    },
+                    child: ListTile(
+                      title: Text(financeOperation.name),
+                      subtitle: Text(financeOperation.value.toString()),
+                    ),
+                  ),
                 );
               },
               itemCount: financeOperations!.length,

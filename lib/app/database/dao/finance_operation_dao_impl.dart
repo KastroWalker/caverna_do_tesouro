@@ -25,14 +25,15 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
   @override
   FinanceOperation toObject(Map<String, dynamic> map) {
     return FinanceOperation(
+      id: map[FinanceOperationColumnsName.id],
       name: map[FinanceOperationColumnsName.name],
       value: map[FinanceOperationColumnsName.value],
       // TODO refactor to get type from database
-      financeOperationType: FinanceOperationType(1, 'Receita'),
+      financeOperationType: FinanceOperationType(map['finance_operation_id'], map['type_name']),
       // TODO refactor to get income from database
       income: Account(
-        name: 'Conta Corrente',
-        balance: 100.0,
+        name: map['account_name'],
+        balance: map['account_balance'],
       ),
     );
   }
@@ -42,12 +43,10 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
     final connection = await Connection.get();
 
     if (connection != null) {
-      // final List<Map<String, dynamic>> maps = await connection.query(_table);
-
       // TODO export to an String
       // TODO refactor to get account or credit card information
       final List<Map<String, dynamic>> maps =
-          await connection.rawQuery('''SELECT *, type_operation.*, account.* 
+          await connection.rawQuery('''SELECT *, type_operation.*, account.name as account_name, account.balance as account_balance 
       FROM $_table
       INNER JOIN finance_operation_type AS type_operation
       ON finance_operation_id = type_operation.id
