@@ -13,6 +13,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
+// TODO Create controller to handle the logic
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
@@ -27,10 +28,14 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          FinancialInformation(),
           FinanceOperationList(),
-          ElevatedButton(onPressed: () {
-            Navigator.pushNamed(context, MyApp.accountListPage);
-          }, child: const Text('Contas Bancárias'),),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, MyApp.accountListPage);
+            },
+            child: const Text('Contas Bancárias'),
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
@@ -151,6 +156,98 @@ class FinanceOperationList extends StatelessWidget {
         }
         return const Text('Unknown error');
       },
+    );
+  }
+}
+
+class FinancialInformation extends StatelessWidget {
+  final _financeOperationService = GetIt.I.get<IFinanceOperationService>();
+
+  FinancialInformation({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<FinanceOperation>?>(
+      initialData: const [],
+      future: _financeOperationService.listAll(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+            break;
+          case ConnectionState.active:
+            break;
+          case ConnectionState.waiting:
+            return const Loader(text: 'Carregando lançamentos...');
+          case ConnectionState.done:
+            if (snapshot.hasError) {
+              return const Text('Erro ao carregar lançamentos');
+            }
+            final List<FinanceOperation>? financeOperations = snapshot.data;
+            return Container(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: const [
+                  FinancialOperationCard(
+                    title: 'Entradas',
+                    value: '100.00',
+                    textColor: Colors.green,
+                  ),
+                  FinancialOperationCard(
+                    title: 'Saídas',
+                    value: '100.00',
+                    textColor: Colors.red,
+                  ),
+                  FinancialOperationCard(
+                    title: 'Balanço',
+                    value: '100.00',
+                    textColor: Colors.blue,
+                  ),
+                ],
+              ),
+            );
+        }
+        return const Text('Unknown error');
+      },
+    );
+  }
+}
+
+class FinancialOperationCard extends StatelessWidget {
+  final String title;
+  final Color textColor;
+  final String value;
+
+  const FinancialOperationCard(
+      {Key? key,
+      required this.title,
+      required this.textColor,
+      required this.value})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xffdfdfdf)),
+        color: const Color(0xfff4f3f3),
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 24,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          Text('R\$ $value', style: TextStyle(color: textColor, fontSize: 16)),
+        ],
+      ),
     );
   }
 }
