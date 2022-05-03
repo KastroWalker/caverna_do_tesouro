@@ -4,6 +4,7 @@ import 'package:caverna_do_tesouro/app/view/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
+import '../domain/entities/total_financial_operation.dart';
 import '../my_app.dart';
 
 class HomePage extends StatefulWidget {
@@ -116,7 +117,7 @@ class FinanceOperationList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<FinanceOperation>?>(
+    return FutureBuilder<List<FinanceOperation>>(
       initialData: const [],
       future: _financeOperationService.listAll(),
       builder: (context, snapshot) {
@@ -151,7 +152,7 @@ class FinanceOperationList extends StatelessWidget {
                   ),
                 );
               },
-              itemCount: financeOperations!.length,
+              itemCount: financeOperations?.length,
             );
         }
         return const Text('Unknown error');
@@ -167,9 +168,9 @@ class FinancialInformation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<FinanceOperation>?>(
-      initialData: const [],
-      future: _financeOperationService.listAll(),
+    return FutureBuilder<TotalFinancialOperations>(
+      initialData: TotalFinancialOperations(totalEntry: 0, totalExpense: 0),
+      future: _financeOperationService.getFinancialInformation(),
       builder: (context, snapshot) {
         switch (snapshot.connectionState) {
           case ConnectionState.none:
@@ -182,26 +183,32 @@ class FinancialInformation extends StatelessWidget {
             if (snapshot.hasError) {
               return const Text('Erro ao carregar lançamentos');
             }
-            final List<FinanceOperation>? financeOperations = snapshot.data;
+
+            final TotalFinancialOperations totalFinancialOperations = snapshot.data!;
+
+            final totalEntry = totalFinancialOperations.totalEntry.toStringAsFixed(2);
+            final totalExpense = totalFinancialOperations.totalExpense.toStringAsFixed(2);
+            final totalBalance = totalFinancialOperations.totalBalance.toStringAsFixed(2);
+
             return Container(
               padding: const EdgeInsets.only(top: 16.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: const [
+                children: [
                   FinancialOperationCard(
                     title: 'Entradas',
-                    value: '100.00',
+                    value: totalEntry,
                     textColor: Colors.green,
                   ),
                   FinancialOperationCard(
                     title: 'Saídas',
-                    value: '100.00',
+                    value: totalExpense,
                     textColor: Colors.red,
                   ),
                   FinancialOperationCard(
                     title: 'Balanço',
-                    value: '100.00',
+                    value: totalBalance,
                     textColor: Colors.blue,
                   ),
                 ],

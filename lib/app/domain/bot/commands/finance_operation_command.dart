@@ -50,18 +50,18 @@ class FinanceOperationCommands {
       options: options,
     );
   }
-
-  Future<Answer> _createTypeIncomeList() async {
-    final options = [
-      {"text": "Conta bancária", "value": "1"},
-      {"text": "Cartão de Crédito", "value": "2"},
-    ];
-    return Answer(
-      type: AnswerType.selection,
-      selectionTitle: "Qual o tipo de lançamento?",
-      options: options,
-    );
-  }
+  //
+  // Future<Answer> _createTypeIncomeList() async {
+  //   final options = [
+  //     {"text": "Conta bancária", "value": "1"},
+  //     {"text": "Cartão de Crédito", "value": "2"},
+  //   ];
+  //   return Answer(
+  //     type: AnswerType.selection,
+  //     selectionTitle: "Qual o tipo de lançamento?",
+  //     options: options,
+  //   );
+  // }
 
   // TODO add validation to values
   // TODO if the typeOperation is entry just list accounts
@@ -76,10 +76,11 @@ class FinanceOperationCommands {
       answer = await _createTypeOperationList();
     } else if (_financeOperationData["typeOperation"]!.isEmpty) {
       _financeOperationData["typeOperation"] = message;
-      answer = await _createTypeIncomeList();
-    } else if (_financeOperationData["typeIncome"]!.isEmpty) {
-      _financeOperationData["typeIncome"] = message;
       answer = await _createAccountsList();
+      // answer = await _createTypeIncomeList();
+      // } else if (_financeOperationData["typeIncome"]!.isEmpty) {
+      //   _financeOperationData["typeIncome"] = message;
+      //   answer = await _createAccountsList();
     } else if (_financeOperationData["incomeId"]!.isEmpty) {
       _financeOperationData["incomeId"] = message;
       var operationCreated = await _service.create(_financeOperationData);

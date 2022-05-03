@@ -6,6 +6,7 @@ import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_servi
 import 'package:get_it/get_it.dart';
 
 import '../entities/finance_operation_type.dart';
+import '../entities/total_financial_operation.dart';
 import '../exceptions/invalid_data.dart';
 
 class FinanceOperationService implements IFinanceOperationService {
@@ -17,7 +18,7 @@ class FinanceOperationService implements IFinanceOperationService {
     final name = data["name"];
     final value = double.parse(data["value"]!);
     final typeOperation = data["typeOperation"];
-    final typeIncome = data["typeIncome"];
+    // final typeIncome = data["typeIncome"];
     final incomeId = data["incomeId"];
     final financeOperationType = typeOperation == "1"
         ? FinanceOperationType(1, 'entry')
@@ -43,7 +44,20 @@ class FinanceOperationService implements IFinanceOperationService {
   }
 
   @override
-  Future<List<FinanceOperation>?> listAll() async {
-    return await _dao.fetchAll();
+  Future<List<FinanceOperation>> listAll() async {
+    try {
+      return await _dao.fetchAll();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<TotalFinancialOperations> getFinancialInformation() async {
+    try {
+      return await _dao.fetchTotalFinancialOperations();
+    } catch (e) {
+      rethrow;
+    }
   }
 }

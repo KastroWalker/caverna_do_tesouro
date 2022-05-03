@@ -1,5 +1,6 @@
 import 'package:caverna_do_tesouro/app/domain/entities/account.dart';
 import 'package:caverna_do_tesouro/app/domain/entities/finance_operation.dart';
+import 'package:caverna_do_tesouro/app/domain/entities/total_financial_operation.dart';
 import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_dao.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -11,42 +12,32 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
 
   // TODO add try catch in the methods
 
+  // TODO refactor to return an object
   @override
   Future<String> store(FinanceOperation financeOperation) async {
-    final connection = await Connection.get();
-    financeOperation.id = await connection?.insert(
-      _table,
-      financeOperation.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-    return financeOperation.toString();
+    try {
+      final connection = await Connection.get();
+
+      financeOperation.id = await connection!.insert(
+        _table,
+        financeOperation.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      return financeOperation.toString();
+    } catch (e) {
+      throw Exception('Error on store finance operation');
+    }
   }
 
   @override
-  FinanceOperation toObject(Map<String, dynamic> map) {
-    return FinanceOperation(
-      id: map[FinanceOperationColumnsName.id],
-      name: map[FinanceOperationColumnsName.name],
-      value: map[FinanceOperationColumnsName.value],
-      // TODO refactor to get type from database
-      financeOperationType: FinanceOperationType(map['finance_operation_id'], map['type_name']),
-      // TODO refactor to get income from database
-      income: Account(
-        name: map['account_name'],
-        balance: map['account_balance'],
-      ),
-    );
-  }
+  Future<List<FinanceOperation>> fetchAll() async {
+    try {
+      final connection = await Connection.get();
 
-  @override
-  Future<List<FinanceOperation>?> fetchAll() async {
-    final connection = await Connection.get();
-
-    if (connection != null) {
       // TODO export to an String
       // TODO refactor to get account or credit card information
-      final List<Map<String, dynamic>> maps =
-          await connection.rawQuery('''SELECT *, type_operation.*, account.name as account_name, account.balance as account_balance 
+      final List<Map<String, dynamic>> maps = await connection!.rawQuery(
+          '''SELECT *, type_operation.*, account.name as account_name, account.balance as account_balance 
       FROM $_table
       INNER JOIN finance_operation_type AS type_operation
       ON finance_operation_id = type_operation.id
@@ -57,8 +48,44 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
       return List.generate(maps.length, (index) {
         return toObject(maps[index]);
       });
+    } catch (e) {
+      throw Exception('Error on fetch all finance operations');
     }
+  }
 
-    return null;
+  @override
+  Future<TotalFinancialOperations> fetchTotalFinancialOperations() async {
+    try {
+      final connection = await Connection.get();
+
+      final List<Map<String, dynamic>> maps = await connection!.rawQuery('''
+          SELECT SUM(value) FROM $_table WHERE finance_operation_id = 1
+          UNION ALL
+          SELECT SUM(value) FROM $_table WHERE finance_operation_id = 2
+        ''');
+
+      return TotalFinancialOperations(
+          totalEntry: double.parse(maps[0]['SUM(value)'].toString()),
+          totalExpense: double.parse(maps[1]['SUM(value)'].toString()));
+    } catch (e) {
+      throw Exception('Error on fetch total financial operations');
+    }
+  }
+
+  @override
+  FinanceOperation toObject(Map<String, dynamic> map) {
+    return FinanceOperation(
+      id: map[FinanceOperationColumnsName.id],
+      name: map[FinanceOperationColumnsName.name],
+      value: map[FinanceOperationColumnsName.value],
+      // TODO refactor to get type from database
+      financeOperationType:
+          FinanceOperationType(map['finance_operation_id'], map['type_name']),
+      // TODO refactor to get income from database
+      income: Account(
+        name: map['account_name'],
+        balance: map['account_balance'],
+      ),
+    );
   }
 }
