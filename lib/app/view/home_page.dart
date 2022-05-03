@@ -29,7 +29,27 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Container(
+            padding: const EdgeInsets.only(top: 24),
+            child: const Text(
+              'Receitas',
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           FinancialInformation(),
+          Container(
+            padding: const EdgeInsets.only(top: 24),
+            child: const Text(
+              'Lançamentos',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
           FinanceOperationList(),
           ElevatedButton(
             onPressed: () {
@@ -181,7 +201,7 @@ class FinancialInformation extends StatelessWidget {
             return const Loader(text: 'Carregando lançamentos...');
           case ConnectionState.done:
             if (snapshot.hasError) {
-              return const Text('Erro ao carregar lançamentos');
+              return const Text('Erro ao carregar dados financeiros!');
             }
 
             final TotalFinancialOperations totalFinancialOperations = snapshot.data!;
@@ -236,11 +256,11 @@ class FinancialOperationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: const Color(0xffdfdfdf)),
-        color: const Color(0xfff4f3f3),
+        color: const Color(0xfff8f8f8),
       ),
       child: Column(
         children: [

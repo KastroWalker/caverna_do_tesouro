@@ -64,9 +64,13 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
           SELECT SUM(value) FROM $_table WHERE finance_operation_id = 2
         ''');
 
+      final entryValue = maps[0]['SUM(value)'] ?? '0.0';
+      final expenseValue = maps[1]['SUM(value)'] ?? '0.0';
+
       return TotalFinancialOperations(
-          totalEntry: double.parse(maps[0]['SUM(value)'].toString()),
-          totalExpense: double.parse(maps[1]['SUM(value)'].toString()));
+        totalEntry: double.parse(entryValue.toString()),
+        totalExpense: double.parse(expenseValue.toString()),
+      );
     } catch (e) {
       throw Exception('Error on fetch total financial operations');
     }
