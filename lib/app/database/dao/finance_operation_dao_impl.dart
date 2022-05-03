@@ -37,8 +37,8 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
       // TODO export to an String
       // TODO refactor to get account or credit card information
       final List<Map<String, dynamic>> maps = await connection!.rawQuery(
-          '''SELECT *, type_operation.*, account.name as account_name, account.balance as account_balance 
-      FROM $_table
+          '''SELECT finance_operation.*, type_operation.*, account.name as account_name, account.balance as account_balance 
+      FROM $_table as finance_operation
       INNER JOIN finance_operation_type AS type_operation
       ON finance_operation_id = type_operation.id
       INNER JOIN account AS account
@@ -91,5 +91,16 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
         balance: map['account_balance'],
       ),
     );
+  }
+
+  @override
+  Future<int> delete(int id) async {
+    try {
+      final connection = await Connection.get();
+
+      return await connection!.delete(_table, where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      throw Exception('Error on delete finance operation');
+    }
   }
 }

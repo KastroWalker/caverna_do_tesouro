@@ -1,5 +1,6 @@
 import 'package:caverna_do_tesouro/app/domain/entities/finance_operation.dart';
 import 'package:caverna_do_tesouro/app/domain/interfaces/finance_operation_service.dart';
+import 'package:caverna_do_tesouro/app/view/widgets/bg_list_item_remove.dart';
 import 'package:caverna_do_tesouro/app/view/widgets/loader.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -135,6 +136,31 @@ class FinanceOperationList extends StatelessWidget {
     );
   }
 
+  Future<bool?> _showConfirmationDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        // TODO turn into a widget
+        return AlertDialog(
+          title: const Text("Remover lançamento"),
+          content:
+              const Text("Tem certeza que deseja remover esse lançamento?"),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("Cancelar"),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text("Remover"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<FinanceOperation>>(
@@ -160,7 +186,31 @@ class FinanceOperationList extends StatelessWidget {
                 final FinanceOperation financeOperation =
                     financeOperations![index];
                 return Dismissible(
+                  onDismissed: (direction) async {
+                    final isFinanceOperationRemoved = await _financeOperationService
+                        .remove(financeOperation.id);
+
+                    if (isFinanceOperationRemoved) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content:
+                              Text('"${financeOperation.name}" foi removido!'),
+                        ),
+                      );
+                    }
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                            'Erro ao remover "${financeOperation.name}"! Tente novamente!'),
+                      ),
+                    );
+                  },
+                  confirmDismiss: (direction) async {
+                    return await _showConfirmationDialog(context);
+                  },
                   key: Key(financeOperation.id.toString()),
+                  background: const BGListItemRemove(),
                   child: InkWell(
                     onTap: () {
                       _showOperationInfo(context, financeOperation);

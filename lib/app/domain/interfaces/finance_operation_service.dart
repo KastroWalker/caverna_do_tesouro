@@ -8,4 +8,6 @@ abstract class IFinanceOperationService {
   Future<List<FinanceOperation>> listAll();
 
   Future<TotalFinancialOperations> getFinancialInformation();
+
+  Future<bool> remove(int financeOperationID);
 }

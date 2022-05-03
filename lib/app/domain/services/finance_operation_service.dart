@@ -60,4 +60,9 @@ class FinanceOperationService implements IFinanceOperationService {
       rethrow;
     }
   }
+
+  @override
+  Future<bool> remove(int financeOperationID) async {
+    return await _dao.delete(financeOperationID) == 1 ? true : false;
+  }
 }
