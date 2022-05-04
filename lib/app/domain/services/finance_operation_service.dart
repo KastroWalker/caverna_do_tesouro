@@ -8,10 +8,12 @@ import 'package:get_it/get_it.dart';
 import '../entities/finance_operation_type.dart';
 import '../entities/total_financial_operation.dart';
 import '../exceptions/invalid_data.dart';
+import '../interfaces/account_service.dart';
 
 class FinanceOperationService implements IFinanceOperationService {
   final _dao = GetIt.I.get<IFinanceOperationDAO>();
   final _accountDAO = GetIt.I.get<IAccountDAO>();
+  final _accountService = GetIt.I.get<IAccountService>();
 
   @override
   Future<String> create(Map<String, String> data) async {
@@ -23,7 +25,6 @@ class FinanceOperationService implements IFinanceOperationService {
     final financeOperationType = typeOperation == "1"
         ? FinanceOperationType(1, 'entry')
         : FinanceOperationType(2, 'expense');
-
     // TODO: validate data
     if (name == null) {
       throw InvalidData("Name is required!");
@@ -33,14 +34,26 @@ class FinanceOperationService implements IFinanceOperationService {
 
     income = (await _accountDAO.findById(int.parse(incomeId!)))!;
 
-    final newFinanceOperation = FinanceOperation(
-      name: name,
-      value: value,
-      financeOperationType: financeOperationType,
-      income: income,
-    );
+    bool isBalanceUpdated;
 
-    return await _dao.store(newFinanceOperation);
+    if (financeOperationType.id == 1) {
+      isBalanceUpdated = await _accountService.deposit(int.parse(incomeId), value);
+    } else {
+      isBalanceUpdated = await _accountService.withdraw(int.parse(incomeId), value);
+    }
+
+    if (isBalanceUpdated) {
+      final newFinanceOperation = FinanceOperation(
+        name: name,
+        value: value,
+        financeOperationType: financeOperationType,
+        income: income,
+      );
+
+      return await _dao.store(newFinanceOperation);
+    }
+
+    throw InvalidData("Error on save finance operation!");
   }
 
   @override

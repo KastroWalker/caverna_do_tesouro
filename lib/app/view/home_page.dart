@@ -2,6 +2,7 @@ import 'package:caverna_do_tesouro/app/view/widgets/finance_operation_list.dart'
 import 'package:caverna_do_tesouro/app/view/widgets/financial_information.dart';
 import 'package:flutter/material.dart';
 
+import '../database/dao/account_dao_impl.dart';
 import '../my_app.dart';
 
 class HomePage extends StatefulWidget {
@@ -58,7 +59,8 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton(
               onPressed: () {
-                Navigator.pushNamed(context, MyApp.chatPage);
+                Navigator.pushNamed(context, MyApp.chatPage)
+                    .then((value) => setState(() {}));
               },
               child: const Text('Nova Atividade'),
             ),
