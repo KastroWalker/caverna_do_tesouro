@@ -31,4 +31,36 @@ class AccountService implements IAccountService {
   Future<bool> remove(int accountID) async {
     return await _dao.delete(accountID) == 1 ? true : false;
   }
+
+  @override
+  Future<bool> deposit(int accountID, double amount) async {
+    final account = await _dao.fetchById(accountID);
+
+    if (account == null) return throw InvalidData("Account not found!");
+
+    if (amount <= 0) {
+      throw InvalidData("Amount must be greater than zero!");
+    }
+
+    account.balance += amount;
+
+    return await _dao.update(accountID, account) == 1 ? true : false;
+  }
+
+  @override
+  Future<bool> withdraw(int accountID, double amount) async {
+    final account = await _dao.fetchById(accountID);
+
+    if (account == null) return throw InvalidData("Account not found!");
+
+    if (amount <= 0) {
+      throw InvalidData("Amount must be greater than zero!");
+    } else if (account.balance < amount) {
+      throw InvalidData("Insufficient balance!");
+    }
+
+    account.balance -= amount;
+
+    return await _dao.update(accountID, account) == 1 ? true : false;
+  }
 }

@@ -6,4 +6,8 @@ abstract class IAccountService {
   Future<List<Account>?> listAll();
 
   Future<bool> remove(int accountID);
+
+  Future<bool> deposit(int accountID, double amount);
+
+  Future<bool> withdraw(int accountID, double amount);
 }

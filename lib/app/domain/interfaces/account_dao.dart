@@ -9,4 +9,8 @@ abstract class IAccountDAO implements IDAO {
   Future<int> delete(int id);
 
   Future<Account?> findById(int id);
+
+  Future<int> update(int id, Account account);
+
+  Future<Account?> fetchById(int id);
 }
