@@ -21,16 +21,18 @@ class AccountCommands {
 
   // TODO add validation to values
   Future<Answer> createAccount(String message) async {
-    var answer = Answer(type: AnswerType.text);
+    Answer answer;
 
     if (_accountCreationData["name"]!.isEmpty) {
       _accountCreationData["name"] = message;
-      answer.text = "Qual o saldo inicial?";
+      answer = TextAnswer(text: "Qual o salde inicial?");
     } else if (_accountCreationData["balance"]!.isEmpty) {
       _accountCreationData["balance"] = message;
       var accountCreated = await _service.create(_accountCreationData);
       _clearData();
-      answer.text = "Conta cadastrada: $accountCreated";
+      answer = TextAnswer(text: "Conta cadastrada: $accountCreated");
+    } else {
+      answer = TextAnswer(text: "Erro ao criar conta! Tente novamente.");
     }
 
     return answer;

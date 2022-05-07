@@ -3,11 +3,24 @@ enum AnswerType {
   selection,
 }
 
-class Answer {
-  final AnswerType type;
-  String? text;
-  String? selectionTitle;
-  List<Map<String, String>>? options;
+abstract class Answer {}
 
-  Answer({required this.type, this.text, this.options, this.selectionTitle});
+class TextAnswer implements Answer {
+  final String text;
+
+  TextAnswer({required this.text});
+}
+
+class SelectionAnswer implements Answer {
+  final String title;
+  final String groupId;
+  final List<Map<String, String>> options;
+  bool isDisabled;
+
+  SelectionAnswer({
+    required this.title,
+    required this.groupId,
+    required this.options,
+    this.isDisabled = false,
+  });
 }

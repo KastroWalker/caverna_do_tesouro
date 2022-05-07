@@ -26,7 +26,7 @@ class _ChatPageState extends State<ChatPage> {
   _ChatPageState() {
     final initialMessage = _createTextMessage(
       ChatMessageType.bot,
-      _chatBot.initialMessage().text!,
+      _chatBot.initialMessage().text,
     );
     _messageList.add(initialMessage);
   }
@@ -82,9 +82,11 @@ class _ChatPageState extends State<ChatPage> {
           throw InvalidMessage('The bot message should have a Answer Object!');
         }
 
-        messageItem = answer.type == AnswerType.text
-            ? _createTextMessage(type, answer.text!)
-            : _createSelectionMessage(answer.options!, answer.selectionTitle!);
+        if (answer is TextAnswer) {
+          messageItem = _createTextMessage(type, answer.text);
+        } else if (answer is SelectionAnswer) {
+          messageItem = _createSelectionMessage(answer.options, answer.title);
+        }
         break;
     }
 
@@ -127,6 +129,3 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 }
-
-
-

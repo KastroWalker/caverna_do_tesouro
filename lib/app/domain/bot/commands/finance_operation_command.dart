@@ -28,14 +28,13 @@ class FinanceOperationCommands {
     List<Map<String, String>> accountsOptions = [];
 
     for (final account in accounts!) {
-      accountsOptions
-          .add({'text': account.name, 'value': '${account.id}'});
+      accountsOptions.add({'text': account.name, 'value': '${account.id}'});
     }
 
-    return Answer(
-      type: AnswerType.selection,
-      selectionTitle: "Qual conta esse lançamento está vinculado?",
+    return SelectionAnswer(
+      title: "Qual conta esse lançamento está vinculado?",
       options: accountsOptions,
+      groupId: "accounts",
     );
   }
 
@@ -44,10 +43,10 @@ class FinanceOperationCommands {
       {"text": "Entrada", "value": "1"},
       {"text": "Saida", "value": "2"},
     ];
-    return Answer(
-      type: AnswerType.selection,
-      selectionTitle: "Qual o tipo de lançamento?",
+    return SelectionAnswer(
+      title: "Qual conta esse lançamento está vinculado?",
       options: options,
+      groupId: "accounts",
     );
   }
   //
@@ -66,11 +65,11 @@ class FinanceOperationCommands {
   // TODO add validation to values
   // TODO if the typeOperation is entry just list accounts
   Future<Answer> createFinanceOperation(String message) async {
-    var answer = Answer(type: AnswerType.text);
+    Answer answer;
 
     if (_financeOperationData["name"]!.isEmpty) {
       _financeOperationData["name"] = message;
-      answer.text = "Qual o valor do lançamento?";
+      answer = TextAnswer(text: "Qual o valor do lançamento?");
     } else if (_financeOperationData["value"]!.isEmpty) {
       _financeOperationData["value"] = message;
       answer = await _createTypeOperationList();
@@ -85,7 +84,10 @@ class FinanceOperationCommands {
       _financeOperationData["incomeId"] = message;
       var operationCreated = await _service.create(_financeOperationData);
       _clearData();
-      answer.text = "Lançamento cadastrado: $operationCreated";
+      answer = TextAnswer(text: "Lançamento cadastrado: $operationCreated");
+    } else {
+      answer =
+          TextAnswer(text: "Erro ao cadastrar lançamento! Tente novamente.");
     }
 
     return answer;

@@ -37,13 +37,14 @@ class Bot {
     switch (_currentOperation) {
       case CurrentOperationType.none:
         final updateMessage = _updateOperation(message);
-        return Answer(type: AnswerType.text, text: updateMessage);
+        return TextAnswer(text: updateMessage);
+
       case CurrentOperationType.accountCreation:
         return await accountCommands.createAccount(message);
       case CurrentOperationType.financeOperationCreation:
         return await financeOperationCommands.createFinanceOperation(message);
       default:
-        return Answer(type: AnswerType.text, text: "");
+        return TextAnswer(text: "");
     }
   }
 
@@ -58,12 +59,12 @@ class Bot {
     }
   }
 
-  Answer initialMessage() {
+  TextAnswer initialMessage() {
     var message = "";
 
     _operationsOptions.asMap().forEach(
         (index, operation) => message = "$message\n${index + 1} - $operation");
 
-    return Answer(type: AnswerType.text, text: message);
+    return TextAnswer(text: message);
   }
 }
