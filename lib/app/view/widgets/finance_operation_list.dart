@@ -56,6 +56,17 @@ class FinanceOperationList extends StatelessWidget {
                 Text(operation.income.name),
               ],
             ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Data de criação:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                // TODO format to brazilian date
+                Text(operation.createdAt.toString().split(' ')[0]),
+              ],
+            ),
           ],
         ),),
       ),

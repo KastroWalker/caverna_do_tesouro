@@ -43,6 +43,7 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
       ON finance_operation_id = type_operation.id
       INNER JOIN account AS account
       ON account_id = account.id
+      ORDER BY createdAt DESC
       ''');
 
       return List.generate(maps.length, (index) {
@@ -90,6 +91,7 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
         name: map['account_name'],
         balance: map['account_balance'],
       ),
+      createdAt: DateTime.tryParse(map[FinanceOperationColumnsName.createdAt]),
     );
   }
 
