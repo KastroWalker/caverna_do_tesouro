@@ -46,7 +46,7 @@ class FinanceOperationCommands {
     return SelectionAnswer(
       title: "Qual conta esse lançamento está vinculado?",
       options: options,
-      groupId: "accounts",
+      groupId: "typeOperation",
     );
   }
   //

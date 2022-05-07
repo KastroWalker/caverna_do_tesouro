@@ -2,7 +2,6 @@ import 'package:caverna_do_tesouro/app/view/widgets/finance_operation_list.dart'
 import 'package:caverna_do_tesouro/app/view/widgets/financial_information.dart';
 import 'package:flutter/material.dart';
 
-import '../database/dao/account_dao_impl.dart';
 import '../my_app.dart';
 
 class HomePage extends StatefulWidget {

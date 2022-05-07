@@ -21,7 +21,7 @@ class _ChatPageState extends State<ChatPage> {
   final _chatBot = Bot();
   final _messageList = [];
   final _controllerText = TextEditingController();
-  final _selectionController = SelectionController();
+  final _chatPageController = ChatPageController();
 
   _ChatPageState() {
     final initialMessage = _createTextMessage(
@@ -40,24 +40,26 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   ChatMessageItem _createSelectionMessage(
-    List<Map<String, String>> options,
-    String title,
+    SelectionAnswer answer,
   ) {
+    _chatPageController.insertSelectionGroup(answer);
     Widget chatSelectionMessageItem = AnimatedBuilder(
-      animation: _selectionController,
+      animation: _chatPageController,
       builder: (_, widget) {
         return ChatSelectionMessageItem(
-          cardTitle: title,
-          options: options,
-          groupValue: _selectionController.group,
-          onChanged: _selectionController.updateOptionSelected,
-          onPressedButton: _onSelectedSelectionOption,
+          title: answer.title,
+          groupId: answer.groupId,
+          options: answer.options,
+          isDisabled: answer.isDisabled,
+          groupValue: _chatPageController.valueSelected[answer.groupId],
+          onChanged: _chatPageController.updateValueSelected,
+          onPressed: _onSelectedSelectionOption,
         );
       },
     );
 
     ChatMessageItem messageItem =
-        ChatMessageItem(chatItem: chatSelectionMessageItem);
+    ChatMessageItem(chatItem: chatSelectionMessageItem);
 
     return messageItem;
   }
@@ -85,7 +87,7 @@ class _ChatPageState extends State<ChatPage> {
         if (answer is TextAnswer) {
           messageItem = _createTextMessage(type, answer.text);
         } else if (answer is SelectionAnswer) {
-          messageItem = _createSelectionMessage(answer.options, answer.title);
+          messageItem = _createSelectionMessage(answer);
         }
         break;
     }
@@ -103,8 +105,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   // TODO move to a controller
-  void _onSelectedSelectionOption() {
-    _sendMessage(_selectionController.group);
+  void _onSelectedSelectionOption(String groupId) {
+    _chatPageController.disableSelectionGroup(groupId);
+    _sendMessage(_chatPageController.valueSelected[groupId]);
   }
 
   @override

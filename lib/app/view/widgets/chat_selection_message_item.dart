@@ -1,60 +1,43 @@
-import 'package:caverna_do_tesouro/app/view/widgets/labeled_radio.dart';
+import 'package:caverna_do_tesouro/app/view/widgets/selection_radio.dart';
 import 'package:flutter/material.dart';
 
 class ChatSelectionMessageItem extends StatelessWidget {
-  final String cardTitle;
+  final String title;
+  final String groupId;
   final List<Map<String, String>> options;
+  final Function(String, String) onChanged;
   final String groupValue;
-  final ValueChanged<String> onChanged;
-  final Function onPressedButton;
+  final Function(String) onPressed;
+  final bool isDisabled;
 
   const ChatSelectionMessageItem({
-    required this.groupValue,
-    required this.cardTitle,
+    Key? key,
+    required this.title,
+    required this.groupId,
     required this.options,
     required this.onChanged,
-    required this.onPressedButton,
-    Key? key,
+    required this.groupValue,
+    required this.onPressed,
+    required this.isDisabled,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _buildTitle(),
-        for (Map<String, String> option in options)
-          LabeledRadio(
-            label: option['text']!,
+        Text(title),
+        for (var option in options)
+          SelectionRadio(
+            title: option['text']!,
             value: option['value']!,
             groupValue: groupValue,
+            groupId: groupId,
             onChanged: onChanged,
+            isDisabled: isDisabled,
           ),
-        _buildButton(),
-      ],
-    );
-  }
-
-  Widget _buildButton() {
-    return ElevatedButton(
-      onPressed: groupValue.isEmpty
-          ? null
-          : () {
-              onPressedButton();
-            },
-      child: const Text('Selecionar'),
-    );
-  }
-
-  Widget _buildTitle() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          cardTitle,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+        ElevatedButton(
+          onPressed: isDisabled ? null : () => onPressed(groupId),
+          child: const Text('Selectionar'),
         ),
       ],
     );
