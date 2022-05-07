@@ -13,4 +13,6 @@ abstract class IAccountDAO implements IDAO {
   Future<int> update(int id, Account account);
 
   Future<Account?> fetchById(int id);
+
+  Future<int> hasAccountStored();
 }

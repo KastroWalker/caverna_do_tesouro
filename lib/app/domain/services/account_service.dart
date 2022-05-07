@@ -63,4 +63,9 @@ class AccountService implements IAccountService {
 
     return await _dao.update(accountID, account) == 1 ? true : false;
   }
+
+  @override
+  Future<bool> hasAccountStored() async {
+    return await _dao.hasAccountStored() == 1 ? true : false;
+  }
 }

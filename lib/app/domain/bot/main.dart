@@ -1,4 +1,5 @@
 import 'package:caverna_do_tesouro/app/domain/entities/answer.dart';
+import 'package:caverna_do_tesouro/app/domain/interfaces/account_service.dart';
 import 'package:get_it/get_it.dart';
 
 import 'commands/account_command.dart';
@@ -10,6 +11,7 @@ enum CurrentOperationType { none, accountCreation, financeOperationCreation }
 class Bot {
   final accountCommands = GetIt.I.get<AccountCommands>();
   final financeOperationCommands = GetIt.I.get<FinanceOperationCommands>();
+  final accountService = GetIt.I.get<IAccountService>();
 
   // TODO move to an external file
   final _operationsOptions = [
@@ -36,7 +38,7 @@ class Bot {
   Future<Answer> processMessage(String message) async {
     switch (_currentOperation) {
       case CurrentOperationType.none:
-        final updateMessage = _updateOperation(message);
+        final updateMessage = await _updateOperation(message);
         return TextAnswer(text: updateMessage);
 
       case CurrentOperationType.accountCreation:
@@ -48,12 +50,28 @@ class Bot {
     }
   }
 
-  String _updateOperation(String message) {
+  String getInitialMessage(operation) {
+    _currentOperation = operation["operationType"] as CurrentOperationType;
+    var initialMessage = operation["initialMessage"] as String;
+    return initialMessage;
+  }
+
+  Future<String> _updateOperation(String message) async {
     try {
       var operation = _operations[int.parse(message)];
-      _currentOperation = operation["operationType"] as CurrentOperationType;
-      var initialMessage = operation["initialMessage"] as String;
-      return initialMessage;
+
+      if (operation["operationType"] ==
+          CurrentOperationType.financeOperationCreation) {
+        final hasAccountStored = await accountService.hasAccountStored();
+
+        if (hasAccountStored) {
+          return getInitialMessage(operation);
+        } else {
+          return "Para criar um lançamento, primeiro você precisa adicionar uma conta.";
+        }
+      } else {
+        return getInitialMessage(operation);
+      }
     } catch (exception) {
       return "Desculpa, não consegui achar essa opção!\nSó conheço esses comandos:\n${initialMessage()}";
     }

@@ -88,9 +88,23 @@ class AccountDAOImpl implements IAccountDAO {
     try {
       final connection = await Connection.get();
 
-      final accounts = await connection!.query(_table, where: 'id = ?', whereArgs: [id]);
+      final accounts =
+          await connection!.query(_table, where: 'id = ?', whereArgs: [id]);
 
       return toObject(accounts[0]);
+    } catch (e) {
+      throw Exception('Error on fetch account');
+    }
+  }
+
+  @override
+  Future<int> hasAccountStored() async {
+    try {
+      final connection = await Connection.get();
+
+      final accounts = await connection!.rawQuery('SELECT * FROM $_table LIMIT 1');
+
+      return accounts.isEmpty ? 0 : 1;
     } catch (e) {
       throw Exception('Error on fetch account');
     }

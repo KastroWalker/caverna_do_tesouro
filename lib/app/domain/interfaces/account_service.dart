@@ -10,4 +10,6 @@ abstract class IAccountService {
   Future<bool> deposit(int accountID, double amount);
 
   Future<bool> withdraw(int accountID, double amount);
+
+  Future<bool> hasAccountStored();
 }
