@@ -12,4 +12,6 @@ abstract class IAccountService {
   Future<bool> withdraw(int accountID, double amount);
 
   Future<bool> hasAccountStored();
+
+  Future<bool> hasFinanceOperationLinked(int accountID);
 }

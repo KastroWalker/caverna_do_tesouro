@@ -78,4 +78,9 @@ class FinanceOperationService implements IFinanceOperationService {
   Future<bool> remove(int financeOperationID) async {
     return await _dao.delete(financeOperationID) == 1 ? true : false;
   }
+
+  @override
+  Future<List<FinanceOperation>> getByAccount(int accountID) async {
+    return await _dao.fetchByAccount(accountID);
+  }
 }

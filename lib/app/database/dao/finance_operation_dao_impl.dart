@@ -105,4 +105,27 @@ class FinanceOperationDAO implements IFinanceOperationDAO {
       throw Exception('Error on delete finance operation');
     }
   }
+
+  @override
+  Future<List<FinanceOperation>> fetchByAccount(int accountID) async {
+    try {
+      final connection = await Connection.get();
+
+      final maps = await connection!.rawQuery("""
+      SELECT finance_operation.*, type_operation.*, account.name as account_name, account.balance as account_balance 
+      FROM $_table as finance_operation
+      INNER JOIN finance_operation_type AS type_operation
+      ON finance_operation_id = type_operation.id
+      INNER JOIN account AS account
+      ON account_id = account.id
+      WHERE account_id = $accountID
+      """);
+
+      return List.generate(maps.length, (index) {
+        return toObject(maps[index]);
+      });
+    } catch (e) {
+      throw Exception('Error on fetch finance operations by account');
+    }
+  }
 }

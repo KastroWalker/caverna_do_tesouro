@@ -11,4 +11,6 @@ abstract class IFinanceOperationDAO implements IDAO {
   Future<TotalFinancialOperations> fetchTotalFinancialOperations();
 
   Future<int> delete(int id);
+
+  Future<List<FinanceOperation>> fetchByAccount(int accountID);
 }

@@ -23,7 +23,7 @@ class FinancialInformation extends StatelessWidget {
           case ConnectionState.active:
             break;
           case ConnectionState.waiting:
-            return const Loader(text: 'Carregando lançamentos...');
+            return const Loader(text: 'Carregando dados financeiros...');
           case ConnectionState.done:
             if (snapshot.hasError) {
               return const Text('Erro ao carregar dados financeiros!');

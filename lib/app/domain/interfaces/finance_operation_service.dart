@@ -10,4 +10,6 @@ abstract class IFinanceOperationService {
   Future<TotalFinancialOperations> getFinancialInformation();
 
   Future<bool> remove(int financeOperationID);
+
+  Future<List<FinanceOperation>> getByAccount(int accountID);
 }

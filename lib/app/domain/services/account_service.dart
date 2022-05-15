@@ -4,9 +4,11 @@ import 'package:caverna_do_tesouro/app/domain/interfaces/account_service.dart';
 import 'package:get_it/get_it.dart';
 
 import '../entities/account.dart';
+import '../interfaces/finance_operation_dao.dart';
 
 class AccountService implements IAccountService {
   final _dao = GetIt.I.get<IAccountDAO>();
+  final _financeOperationDAO = GetIt.I.get<IFinanceOperationDAO>();
 
   @override
   Future<String> create(Map<String, String> data) async {
@@ -67,5 +69,12 @@ class AccountService implements IAccountService {
   @override
   Future<bool> hasAccountStored() async {
     return await _dao.hasAccountStored() == 1 ? true : false;
+  }
+
+  @override
+  Future<bool> hasFinanceOperationLinked(int accountID) async {
+    final operationsByAccount =
+        await _financeOperationDAO.fetchByAccount(accountID);
+    return operationsByAccount.isNotEmpty;
   }
 }

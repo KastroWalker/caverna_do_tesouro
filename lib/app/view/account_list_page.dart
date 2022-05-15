@@ -44,6 +44,27 @@ class _AccountListPageState extends State<AccountListPage> {
     );
   }
 
+  Future<bool?> _cantRemoveAccountDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        // TODO turn into a widget
+        return AlertDialog(
+          title: const Text("Não é possível remover conta bancária"),
+          content: const Text(
+              "Você não pode remover essa conta bancária, pois ela possui operações financeiras."),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -97,7 +118,14 @@ class _AccountListPageState extends State<AccountListPage> {
                       );
                     },
                     confirmDismiss: (direction) async {
-                      return await _showConfirmationDialog(context);
+                      final hasFinanceOperationLinked = await _accountService
+                          .hasFinanceOperationLinked(account.id);
+
+                      if (hasFinanceOperationLinked) {
+                        return _cantRemoveAccountDialog(context);
+                      } else {
+                        return await _showConfirmationDialog(context);
+                      }
                     },
                     background: const BGListItemRemove(),
                     child: AccountListItem(account),
